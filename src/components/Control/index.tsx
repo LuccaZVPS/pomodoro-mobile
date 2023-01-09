@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { Image } from "react-native";
 import { useCurrentTime } from "../../contexts/current-time";
-import { Button } from "../Button";
+import { Button } from "../Button/index";
 import { Container } from "./styles";
-import BackgroundTimer from "react-native-background-timer";
+import { padStart } from "lodash";
 
 const startImg = require("../../../assets/start.png");
 const pauseImg = require("../../../assets/pause.png");
@@ -12,11 +12,6 @@ export function Control() {
   const time = useCurrentTime();
   const StartOrPause = () => {
     if (!time.start && !time.pause) {
-      BackgroundTimer.runBackgroundTimer(() => {
-        console.log("a");
-      }, 3000);
-      BackgroundTimer.start();
-
       time.setStart(true);
       return;
     }

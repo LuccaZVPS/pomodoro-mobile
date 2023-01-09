@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { useTime } from "./time-context";
+import BackgroundTimer from "react-native-background-timer";
 
 const Context = createContext<currentTime>({} as unknown as currentTime);
 interface props {
@@ -17,7 +18,7 @@ export const CurrentTimeContext = ({ children }: props) => {
   const times = useTime().times;
   const [timeSelected, setTimeSelected] = useState(times.work);
   const [start, setStart] = useState(Boolean);
-  const [dateToStop, setDateToStop] = useState(timeSelected);
+  const [dateToStop, setDateToStop] = useState(0);
   const [time, setTime] = useState(timeSelected * 60000);
   const [pause, setPause] = useState(false);
   const [count, setCount] = useState(0);
@@ -68,6 +69,19 @@ export const CurrentTimeContext = ({ children }: props) => {
     }
     setDateToStop(Date.now() + time);
   }, [pause, start]);
+  useEffect(() => {
+    if (dateToStop === 0) {
+      return;
+    }
+    BackgroundTimer.runBackgroundTimer(() => {
+      console.log(dateToStop);
+    }, 3000);
+  }, [dateToStop]);
+  useEffect(() => {
+    if (pause) {
+      BackgroundTimer.stopBackgroundTimer();
+    }
+  }, [pause]);
   return (
     <Context.Provider
       value={{ timeSelected, start, setStart, time, pause, setPause }}
