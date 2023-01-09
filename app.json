@@ -1,29 +1,34 @@
 {
   "expo": {
-    "name": "pomodoro-mobile",
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": ["./assets/alarm.wav"],
+          "color": "#ffffff",
+          "icon": "./assets/clock.png"
+        }
+      ]
+    ],
+    "name": "Pomodoro",
     "slug": "pomodoro-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/clock.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/clock.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": [
-          "location",
-          "fetch"
-        ]
+        "UIBackgroundModes": ["location", "fetch"]
       },
       "bundleIdentifier": "com.pomodoro"
     },
@@ -34,6 +39,7 @@
       },
       "package": "com.pomodoro"
     },
+    "useNextNotificationsApi": true,
     "web": {
       "favicon": "./assets/favicon.png"
     }

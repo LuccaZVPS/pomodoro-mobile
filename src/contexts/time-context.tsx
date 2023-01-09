@@ -13,9 +13,9 @@ interface props {
 }
 export const TimeContext = ({ children }: props) => {
   const [times, setTimes] = useState({
-    work: 25,
-    rest: 5,
-    longRest: 10,
+    work: 0.2,
+    rest: 0.1,
+    longRest: 0.1,
   });
   return (
     <Context.Provider value={{ setNewTime: setTimes, times }}>

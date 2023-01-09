@@ -9,6 +9,8 @@ import {
 } from "react";
 import { useTime } from "./time-context";
 import BackgroundTimer from "react-native-background-timer";
+import { Vibration } from "react-native";
+import * as Notifications from "expo-notifications";
 
 const Context = createContext<currentTime>({} as unknown as currentTime);
 interface props {
@@ -51,6 +53,8 @@ export const CurrentTimeContext = ({ children }: props) => {
     if (time !== 0 || time > 0) {
       return;
     }
+    BackgroundTimer.stopBackgroundTimer();
+
     if (timeSelected !== times.work) {
       setTimeSelected(times.work);
       setCount(count + 1);
@@ -73,15 +77,24 @@ export const CurrentTimeContext = ({ children }: props) => {
     if (dateToStop === 0) {
       return;
     }
-    BackgroundTimer.runBackgroundTimer(() => {
-      console.log(dateToStop);
-    }, 3000);
+    BackgroundTimer.runBackgroundTimer(async () => {
+      if (dateToStop <= Date.now()) {
+        const PATTERN = [2000, 2000, 2000];
+
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "You ve got mail! 📬",
+            body: "Here is the notification body",
+            data: { data: "goes here" },
+            vibrate: PATTERN,
+          },
+          trigger: { seconds: 1 },
+        });
+        BackgroundTimer.stopBackgroundTimer();
+      }
+    }, 500);
   }, [dateToStop]);
-  useEffect(() => {
-    if (pause) {
-      BackgroundTimer.stopBackgroundTimer();
-    }
-  }, [pause]);
+
   return (
     <Context.Provider
       value={{ timeSelected, start, setStart, time, pause, setPause }}

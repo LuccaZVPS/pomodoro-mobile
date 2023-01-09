@@ -3,7 +3,6 @@ import { Image } from "react-native";
 import { useCurrentTime } from "../../contexts/current-time";
 import { Button } from "../Button/index";
 import { Container } from "./styles";
-import { padStart } from "lodash";
 
 const startImg = require("../../../assets/start.png");
 const pauseImg = require("../../../assets/pause.png");
