@@ -7,6 +7,7 @@ export const Container = styled.View`
   padding: 10px 16px;
   border-radius: 50;
   flex-direction: row;
+  border: 2px ${({ theme }) => theme.font};
 `;
 export const TextType = styled.Text`
   margin-left: 10px;

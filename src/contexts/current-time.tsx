@@ -9,7 +9,9 @@ import {
 } from "react";
 import { useTime } from "./time-context";
 import BackgroundTimer from "react-native-background-timer";
-
+import { NotificationProgress } from "../notifications/progress";
+import notefi from "@notifee/react-native";
+import { CancelNotification } from "../notifications/cancel-notification";
 const Context = createContext<currentTime>({} as unknown as currentTime);
 interface props {
   children: ReactNode;
@@ -70,21 +72,44 @@ export const CurrentTimeContext = ({ children }: props) => {
     setDateToStop(Date.now() + time);
   }, [pause, start]);
   useEffect(() => {
-    if (dateToStop === 0) {
+    if (dateToStop === 0 || !start) {
       return;
     }
-    BackgroundTimer.runBackgroundTimer(() => {
-      console.log(dateToStop);
-    }, 3000);
+
+    BackgroundTimer.runBackgroundTimer(async () => {
+      await NotificationProgress(dateToStop - Date.now(), timeSelected * 60000);
+      if (dateToStop <= Date.now()) {
+        BackgroundTimer.stopBackgroundTimer();
+        await CancelNotification();
+      }
+    }, 500);
   }, [dateToStop]);
   useEffect(() => {
     if (pause) {
       BackgroundTimer.stopBackgroundTimer();
     }
   }, [pause]);
+  const next = () => {
+    setPause(false);
+    setStart(false);
+    BackgroundTimer.stopBackgroundTimer();
+    notefi.cancelNotification("time");
+    if (timeSelected !== times.work) {
+      setTimeSelected(times.work);
+      setCount(count + 1);
+      return;
+    }
+    if (count === 4) {
+      setTimeSelected(times.longRest);
+      setCount(0);
+      return;
+    }
+
+    setTimeSelected(times.rest);
+  };
   return (
     <Context.Provider
-      value={{ timeSelected, start, setStart, time, pause, setPause }}
+      value={{ timeSelected, start, setStart, time, pause, setPause, next }}
     >
       {children}
     </Context.Provider>
@@ -98,4 +123,5 @@ export interface currentTime {
   time: number;
   setPause: Dispatch<SetStateAction<boolean>>;
   pause: boolean;
+  next: () => void;
 }

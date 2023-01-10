@@ -1,14 +1,13 @@
-import { ReactNode } from "react";
 import { Image } from "react-native";
 import { useCurrentTime } from "../../contexts/current-time";
 import { Button } from "../Button/index";
 import { Container } from "./styles";
-import { padStart } from "lodash";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../../contexts/theme-context";
+import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
-const startImg = require("../../../assets/start.png");
-const pauseImg = require("../../../assets/pause.png");
-
-export function Control() {
+export function Control({ navigation }: any) {
   const time = useCurrentTime();
   const StartOrPause = () => {
     if (!time.start && !time.pause) {
@@ -24,44 +23,31 @@ export function Control() {
       return;
     }
   };
+  const { theme } = useTheme();
   return (
     <Container>
-      <Button callBack={StartOrPause}>
-        <Image
-          style={{
-            width: 20,
-            height: 20,
-            aspectRatio: 1,
-            resizeMode: "contain",
-          }}
-          source={require("../../../assets/settings.png")}
-        />
+      <Button
+        callBack={() => {
+          navigation.navigate("Settings");
+        }}
+      >
+        <Ionicons name="options" size={20} color={`${theme.font}`} />
       </Button>
       <Button callBack={StartOrPause} main={true}>
-        <Image
-          style={{
-            width: 20,
-            height: 20,
-            aspectRatio: 1,
-            resizeMode: "contain",
-          }}
-          source={
-            (time.pause && startImg) ||
-            (!time.start && startImg) ||
-            (!time.pause && pauseImg)
-          }
-        />
+        {((time.pause && time.start) || !time.start || time.pause) && (
+          <Entypo name="controller-play" size={30} color={`${theme.font}`} />
+        )}
+
+        {!time.pause && time.start && (
+          <Ionicons name="pause-outline" size={24} color={theme.font} />
+        )}
       </Button>
-      <Button callBack={StartOrPause}>
-        <Image
-          style={{
-            width: 20,
-            height: 20,
-            aspectRatio: 1,
-            resizeMode: "contain",
-          }}
-          source={require("../../../assets/next.png")}
-        />
+      <Button
+        callBack={() => {
+          time.next();
+        }}
+      >
+        <AntDesign name="forward" size={20} color={`${theme.font}`} />
       </Button>
     </Container>
   );
